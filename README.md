@@ -1,2 +1,2 @@
 # apocalyptica-magica
-ttrpg game development
+a tabletop roleplaying game
