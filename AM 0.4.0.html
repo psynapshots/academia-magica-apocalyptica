@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            border: 2px solid #333;
+            padding: 20px;
+        }
+        .problems-row {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 2px solid #333;
+        }
+        .mana-row {
+            padding-top: 20px;
+        }
+        .box {
+            border: 1px solid #666;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .checkbox {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 5px;
+        }
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #666;
+            padding-bottom: 5px;
+        }
+        .flow-arrow {
+            font-size: 24px;
+            margin: 0 10px;
+        }
+        .cycle {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .needs-item {
+            margin-bottom: 15px;
+        }
+        .forte-option {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <!-- Top Row: Problems -->
+        <div class="problems-row">
+            <div class="cycle">
+                FORTES solve PROBLEMS which fulfills NEEDS which restores MANA
+            </div>
+            <div class="box">
+                <h2>PROBLEMS</h2>
+                Investigate, Pursue, Escape, Negotiate, Secure, Deceive, Observe, Survive, Follow, Persuade, Explore, Slay, Protect, Redeem
+            </div>
+        </div>
+
+        <!-- Middle Row: Fortes and Needs -->
+        <div class="main-content">
+            <!-- Left Column: Fortes -->
+            <div class="box">
+                <h2>FORTES</h2>
+                <p>Assign one unique die (d4/d6/d8/d10/d12) to each stat. Pick one forte per stat (unfoiled or *foiled to start).</p>
+                
+                <div class="forte-group">
+                    <strong>1. Mystique</strong><br>
+                    <div class="forte-option">
+                        <span class="checkbox"></span>Graceful →😬*<span class="checkbox"></span>Acquiescent / Stretched Thin<br>
+                        or<br>
+                        <span class="checkbox"></span>Mysterious →😬*<span class="checkbox"></span>Guarded / Out of Sync
+                    </div>
+                </div>
+
+                <div class="forte-group">
+                    <strong>2. Acumen</strong><br>
+                    <div class="forte-option">
+                        <span class="checkbox"></span>Astute →😬*<span class="checkbox"></span>Cynical / Overthinking<br>
+                        or<br>
+                        <span class="checkbox"></span>Rigorous →😬*<span class="checkbox"></span>Detached / Hesitant
+                    </div>
+                </div>
+
+                <div class="forte-group">
+                    <strong>3. Grit</strong><br>
+                    <div class="forte-option">
+                        <span class="checkbox"></span>Tenacious →😬*<span class="checkbox"></span>Stubborn / Predictable<br>
+                        or<br>
+                        <span class="checkbox"></span>Adaptive →😬*<span class="checkbox"></span>Rootless / Scattered
+                    </div>
+                </div>
+
+                <div class="forte-group">
+                    <strong>4. Instinct</strong><br>
+                    <div class="forte-option">
+                        <span class="checkbox"></span>Mindful →😬*<span class="checkbox"></span>Withdrawn / Paralyzed<br>
+                        or<br>
+                        <span class="checkbox"></span>Courageous →😬*<span class="checkbox"></span>Dances with Danger / Reckless
+                    </div>
+                </div>
+
+                <div class="forte-group">
+                    <strong>5. Craft</strong><br>
+                    <div class="forte-option">
+                        <span class="checkbox"></span>Resourceful →😬*<span class="checkbox"></span>Takes Shortcuts / Minimalist<br>
+                        or<br>
+                        <span class="checkbox"></span>Visionary →😬*<span class="checkbox"></span>Unrealistic / Overextended
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Needs -->
+            <div class="box">
+                <h2>NEEDS</h2>
+                <p>For each category below, you must achieve ONE of the two positive actions. Check the boxes if you're experiencing the negative states from unmet needs.</p>
+
+                <div class="needs-item">
+                    <strong>1. Social Growth</strong> (😔 -> <span class="checkbox"></span>invisible <span class="checkbox"></span>unrecognized)<br>
+                    <span class="checkbox"></span>Foster Connection: Build meaningful bonds or strengthen relationships<br>
+                    <span class="checkbox"></span>Earn Recognition: Achieve something noteworthy or gain respect from others
+                </div>
+
+                <div class="needs-item">
+                    <strong>2. Personal Power</strong> (😔 -> <span class="checkbox"></span>insecure <span class="checkbox"></span>disempowered)<br>
+                    <span class="checkbox"></span>Demonstrate Mastery: Show competence or overcome a challenge through skill<br>
+                    <span class="checkbox"></span>Create Security: Establish safety or stability for yourself or others
+                </div>
+
+                <div class="needs-item">
+                    <strong>3. Self-Expression</strong> (😔 -> <span class="checkbox"></span>unfree <span class="checkbox"></span>disrespected)<br>
+                    <span class="checkbox"></span>Exercise Freedom: Make an important choice or act on your own terms<br>
+                    <span class="checkbox"></span>Set Boundaries: Successfully establish or maintain personal limits
+                </div>
+
+                <div class="needs-item">
+                    <strong>4. Mutual Trust</strong> (😔 -> <span class="checkbox"></span>untrusted <span class="checkbox"></span>unsupported)<br>
+                    <span class="checkbox"></span>Show Integrity: Demonstrate trustworthiness or keep an important promise<br>
+                    <span class="checkbox"></span>Offer Support: Provide meaningful help or care to another
+                </div>
+
+                <div class="needs-item">
+                    <strong>5. Understanding</strong> (😔 -> <span class="checkbox"></span>misunderstood <span class="checkbox"></span>disconnected)<br>
+                    <span class="checkbox"></span>Champion Justice: Stand up for what's right or ensure fair treatment<br>
+                    <span class="checkbox"></span>Foster Empathy: Create genuine understanding between people
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Mana -->
+        <div class="mana-row">
+            <div class="box">
+                <h2>MANA</h2>
+                Use these tokens to add +1 to your rolls
+            </div>
+        </div>
+    </div>
+</body>
+</html>
