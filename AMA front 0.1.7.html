@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Base styles */
+        body {
+            font-family: "Bookman Old Style", Georgia, serif;
+            max-width: 11in;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Layout */
+        .page {
+            display: grid;
+            grid-template-columns: .85fr 1.3fr 0.8fr;
+            gap: 20px;
+            border: 5px double #000;
+            padding: 20px;
+        }
+        
+        /* Common styles */
+        .section {
+            border: 1px solid #000;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .section-credits {
+            border: 0px solid #000;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .dotted-line {
+            border-bottom: 1px dotted #000;
+            height: 1.5em;
+            margin: 5px 0;
+        }
+        
+        .checkbox {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 5px;
+        }
+        
+        /* Header styles */
+        .title {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 9px;
+            letter-spacing: 4px;
+            padding: 10px 0;
+        }
+        
+        .title::before, .title::after {
+            content: "✧ ❈ ✧";
+            font-size: 20px;
+            padding: 0px 22px;
+            color: #333;
+        }
+        
+        .setting {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            line-height: 1.4;
+        }
+        
+        /* Section headers */
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .section-title::before, .section-title::after {
+            content: "✧";
+            margin: 0 10px;
+        }
+        
+        /* Stats styling */
+        .stat-row {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .stat-name {
+            display: inline-block;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .die-placeholder {
+            display: inline-block;
+            color: #999;
+            font-style: italic;
+            font-size: 1.2em;
+        }
+        
+        .specializations {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        
+        /* Utility classes */
+        .instructions {
+            font-style: italic;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .instructions-centered {
+            font-style: italic;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: flex;
+
+            justify-content: center;
+        }
+        
+        .success-tiers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .reroll-pool {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .token-box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #000;
+            margin: 10px auto;
+        }
+        .needs-list {
+            display: grid;
+            gap: 4px;
+            font-size: 0.9em;
+        }
+        
+        .need-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .need-name {
+            white-space: nowrap;
+            width: 120px;
+        }
+        
+        .need-desc {
+            font-style: italic;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .need-checks {
+            display: flex;
+            gap: 3px;
+            justify-self: end;
+        }
+        #visualization {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .curved-text {
+            font-size: 12px;
+            fill: #333;
+        }
+        /* Print settings */
+        @page {
+            size: portrait;
+            margin: 0.5in;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="title">✧ ACADEMIA MAGICA APOCALYPTICA ✧</div>
+        <div class="setting">"While competing at the _________ Battle Royale, something went catastrophically wrong, hurling you and your competitors X00 years into a ruined future. All around you lies an apocalyptic wasteland, where survival means trusting your former rivals. Together, you must uncover what happened that day - and find a way back home."</div>
+        
+        <div>
+            <div class="section">
+                <div class="section-title">Character Info</div>
+                <div>Name:<div class="dotted-line"></div></div>
+                <div>School:<div class="dotted-line"></div></div>
+                <div>House:<div class="dotted-line"></div></div>
+                <div>Appearance:<div class="dotted-line"></div></div>
+            </div>
+            <div class="section">
+                <div class="section-title">Needs Framework</div>
+                <div class="instructions">Check left box for secure needs. Meeting insecure needs restore extra HP/MP (mark right boxes) .</div>
+                <div class="needs-list">
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Mastery & Growth<div class="need-desc">Improve skills & knowledge</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Connection<div class="need-desc">Build trust & safety</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Purpose<div class="need-desc">Find meaning & direction</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Recognition<div class="need-desc">Feel valued & seen</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Autonomy<div class="need-desc">Express independence</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Balance<div class="need-desc">Rest & find joy</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Creativity<div class="need-desc">Invent & express</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="need-item">
+                        <div class="checkbox"></div>
+                        <div class="need-name">Arcane Connection<div class="need-desc">Touch the mysteries</div></div>
+                        <div class="need-checks">
+                            <div class="checkbox"></div>
+                            <div class="checkbox"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Reroll Pools</div>
+                <div class="instructions">Distribute 7 total points (min 1, max 4 each) to determine your maximum for each category. Resting restores HP and MP. Scavenging restores IP. </div>
+                <div class="reroll-pool">
+                    HP (Mind/Body):&nbsp;
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                </div>
+                <div class="reroll-pool">
+                    MP (Magical):&nbsp; 
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                </div>
+                <div class="reroll-pool">
+                    IP (Inventory):&nbsp;
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                    <div class="checkbox"></div>
+                </div>
+            </div>
+            <div class="section-credits">
+                <div class="section-title">Version 0.1.6</div>
+                <div class="instructions-centered"> Psynapshots, January 13, 2025</div>
+
+            </div>
+        </div>
+
+        <div>
+            <div class="section">
+                <div class="section-title">Core Stats</div>
+                <div class="instructions">Assign one unique die (d4/d6/d8/d10/d12) to each stat. Choose one style per stat. </div>
+                
+                <div class="stat-row">
+                    <div><span class="stat-name">Mystique</span><span class="die-placeholder">d___</span></div>
+                    <div class="specializations">
+                        <span><div class="checkbox"></div>Graceful</span>
+                        <span><div class="checkbox"></div>Mysterious</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div><span class="stat-name">Acumen</span><span class="die-placeholder">d___</span></div>
+                    <div class="specializations">
+                        <span><div class="checkbox"></div>Astute</span>
+                        <span><div class="checkbox"></div>Rigorous</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div><span class="stat-name">Grit</span><span class="die-placeholder">d___</span></div>
+                    <div class="specializations">
+                        <span><div class="checkbox"></div>Tenacious</span>
+                        <span><div class="checkbox"></div>Adaptive</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div><span class="stat-name">Instinct</span><span class="die-placeholder">d___</span></div>
+                    <div class="specializations">
+                        <span><div class="checkbox"></div>Mindful</span>
+                        <span><div class="checkbox"></div>Courageous</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div><span class="stat-name">Craft</span><span class="die-placeholder">d___</span></div>
+                    <div class="specializations">
+                        <span><div class="checkbox"></div>Resourceful</span>
+                        <span><div class="checkbox"></div>Visionary</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Success Tiers</div>
+                <div class="success-tiers">
+                    <div>7+ Costly</div>
+                    <div>16+ Greater</div>
+                    <div>10+ Lesser</div>
+                    <div>19+ Extraordinary</div>
+                    <div>13+ Solid</div>
+                    <div>22+ Aetheric</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Rolling Mechanics</div>
+                <ul style="font-size: 0.9em; margin: 0; padding-left: 20px;">
+                    <li>Roll two stat dice - one you pick, one the GM picks (can match).</li>
+                    <li>Add +1 for each applicable style under the chosen stats.</li>
+                    <li>Success determined by tiers listed above.</li>
+                    <li>Injuries degrade dice to d4.</li>
+                    <li>Reroll pools and adversity tokens can modify results.</li>
+                </ul>
+            </div>
+            <div class="section">
+                <div class="section-title">Schools of Magic</div>
+                <div class="instructions"> A.M.A. is genre- and culture-agnostic regarding types of magic. Just make sure to stick to one character concept.</div>
+                <ul style="font-size: 0.9em; margin: 0; padding-left: 20px;">
+                    <li>A reflexive minor illusion may be Mystique + Instinct. </li>
+                    <li>A complex ritual spell might be Acumen + Craft. </li>
+                    <li>Primal shapeshifting might be Grit + ?, based on the type of creature. </li>
+                    <li>Any stat(s) could be used for defense depending on how you are evading/blocking.</li>
+                </ul>
+            </div>
+            <div id="visualization" class="section"></div>
+    <script>
+        // Create SVG container
+        const svg = d3.select("#visualization")
+            .append("svg")
+            .attr("width", 500)
+            .attr("height", 500);
+
+        // Add defs for our text paths
+        const defs = svg.append("defs");
+
+        // Calculate the radius of each circle
+        const circleRadius = 44;
+        const ringRadius = .53*circleRadius / Math.sin(Math.PI / 9);
+
+        // Create center point of the ring
+        const centerX = 250;
+        const centerY = 250;
+
+        // Sample text for each circle with custom start angles (in degrees)
+        const circleData = [
+            { text: "aspiration", textStartAngle: -25 },
+            { text: "awe", textStartAngle: 344 },
+            { text: "authenticity", textStartAngle: -37 },
+            { text: "affection", textStartAngle: 333 },
+            { text: "acceptance", textStartAngle: 322 },
+            { text: "allegience", textStartAngle: -30 },
+            { text: "autonomy", textStartAngle: -35 },
+            { text: "aptitude", textStartAngle: -26 },
+            { text: "achievement", textStartAngle: 321 }
+        ];
+
+        // Generate complete data for 9 circles, each 40 degrees apart
+        const completeCircleData = circleData.map((data, i) => {
+            const angle = (i * 40) * (Math.PI / 180); // Convert degrees to radians
+            return {
+                x: centerX + ringRadius * Math.cos(angle),
+                y: centerY + ringRadius * Math.sin(angle),
+                angle: angle,
+                text: data.text,
+                textStartAngle: data.textStartAngle,
+                id: `circle-${i}`
+            };
+        });
+
+        // Create circular paths for text
+        completeCircleData.forEach(d => {
+            // Create a circular path around each circle
+            const textPathRadius = circleRadius + 5; // Slightly larger than circle radius
+            
+            // Calculate the start point of the arc using the custom textStartAngle
+            const startAngle = d.angle + (d.textStartAngle * Math.PI / 180);
+            const textPath = defs.append("path")
+                .attr("id", d.id)
+                .attr("d", `
+                    M ${d.x + textPathRadius * Math.cos(startAngle)},
+                      ${d.y + textPathRadius * Math.sin(startAngle)}
+                    A ${textPathRadius} ${textPathRadius} 0 1 1
+                      ${d.x + textPathRadius * Math.cos(startAngle - 0.01)},
+                      ${d.y + textPathRadius * Math.sin(startAngle - 0.01)}
+                `);
+        });
+
+        // Create groups for circles and their text
+        const groups = svg.selectAll("g")
+            .data(completeCircleData)
+            .enter()
+            .append("g");
+
+        // Draw the circles
+        groups.append("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", circleRadius)
+            .attr("fill", "grey")
+            .attr("fill-opacity", ".2")
+            .attr("stroke", "none")
+            .attr("stroke-width", 1);
+
+        // Add text that follows the circular paths
+        groups.append("text")
+            .attr("class", "curved-text")
+            .attr("dy", -2) // Adjust text position relative to path
+            .append("textPath")
+            .attr("href", d => `#${d.id}`)
+            .attr("startOffset", "0%")
+            .text(d => d.text);
+    </script>
+        </div>
+
+        <div>
+            <div class="section">
+                <div class="section-title">Injury System</div>
+                <div class="instructions">Each injury degrades the associated die to d4.</div>
+                <div>Aesthetic (d6→d4)<div class="dotted-line"></div></div>
+                <div>Grave (d8→d4)<div class="dotted-line"></div></div>
+                <div>Death's Door (d10→d4)<div class="dotted-line"></div></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Adversity Tokens</div>
+                <div class="instructions">Earn on failed checks. Spend 1:1 to boost your rolls or help friends, 2:1 to help others or when Gravely injured.</div>
+                <div class="token-box"></div>
+            </div>
+            <div class="section">
+                <div class="section-title">Friends</div>
+                <div class="instructions">Record their name and how you gained each others' trust.</div>
+                <div>Friend 1: <div class="dotted-line"></div></div>
+                <div>Friend 2: <div class="dotted-line"></div></div>
+                <div>Friend 3: <div class="dotted-line"></div></div>
+                <div>Friend 4: <div class="dotted-line"></div></div>
+                <div>Friend 5: <div class="dotted-line"></div></div>
+                <div>Friend 6: <div class="dotted-line"></div></div>
+                <div>Friend 7: <div class="dotted-line"></div></div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
