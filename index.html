@@ -85,15 +85,17 @@
             background: white;
             border: 1px solid #000;
             padding: 1.5rem;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
         }
 
         .project-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .project-card h2 {
@@ -116,12 +118,12 @@
             font-size: 0.9rem;
         }
 
-        .project-card a {
+        .view-link {
             color: #000;
-            text-decoration: none;
             text-align: center;
             margin-top: auto;
             font-size: 0.9rem;
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -171,41 +173,41 @@
     <h1>✧ ACADEMIA MAGICA APOCALYPTICA ✧</h1>
     
     <div class="projects">
-        <div class="project-card">
+        <a href="./animated-overlapping-needs-loop.html" class="project-card">
             <h2>Animated "Needs" Loop</h2>
             <p>Animated loop illustrating the dynamic structure of how needs overlap.</p>
-            <a href="./animated-overlapping-needs-loop.html">View animated loop →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View animated loop →</span>
+        </a>
+        <a href="./AMA 0.5.6 horizontal 8.html" class="project-card">
             <h2>AMA v0.5.6 "Horizontal 8"</h2>
             <p>Academia Magica Apocalyptica v. 0.5.6</p>
-            <a href="./AMA 0.5.6 horizontal 8.html">View html →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View html →</span>
+        </a>
+        <a href="./AMA 0.5.5.html" class="project-card">
             <h2>AMA v0.5.5 "Worries"</h2>
             <p>Academia Magica Apocalyptica v. 0.5.5</p>
-            <a href="./AMA 0.5.5.html">View html →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View html →</span>
+        </a>
+        <a href="./AMA 0.5.0.png" class="project-card">
             <h2>AMA v0.5.0 "All A"</h2>
             <p>Academia Magica Apocalyptica v. 0.5.0 image</p>
-            <a href="./AMA 0.5.0.png">View png →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View png →</span>
+        </a>
+        <a href="./AMA 0.4.0.html" class="project-card">
             <h2>AMA v0.4.0 "Tasks"</h2>
             <p>Academia Magica Apocalyptica v. 0.4.0 image</p>
-            <a href="./AMA 0.4.0.html">View html →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View html →</span>
+        </a>
+        <a href="./AMA 0.2.0.html" class="project-card">
             <h2>AMA v0.2.0 "Full Feature"</h2>
             <p>Academia Magica Apocalyptica v. 0.5.0 image</p>
-            <a href="./AMA 0.2.0.html">View png →</a>
-        </div>
-        <div class="project-card">
+            <span class="view-link">View html →</span>
+        </a>
+        <a href="./AMA 0.1.7.html" class="project-card">
             <h2>AMA v0.1.7</h2>
             <p>Academia Magica Apocalyptica v. 0.1.7 image</p>
-            <a href="./AMA 0.1.7.html">View html →</a>
-        </div>
+            <span class="view-link">View html →</span>
+        </a>
     </div>
 </body>
 </html>
