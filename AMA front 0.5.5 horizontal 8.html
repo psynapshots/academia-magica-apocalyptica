@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia Magica Apocalyptica Character Sheet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        /* Previous styles remain the same */
+        body {
+            font-family: "Bookman Old Style", Georgia, serif;
+            margin: 0 auto;
+            max-width: 11in;
+
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .section {
+            border: 1px solid #000;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .section-title::before, .section-title::after {
+            content: "✧";
+            margin: 0 10px;
+        }
+        
+        .stat-row {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            justify-content: space-between;
+        }
+        
+        .stat-content {
+            flex-grow: 1;
+            margin-left: 30px;  /* Added margin between dice box and content */
+        }
+
+        .stat-name {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .specializations {
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+
+        .specializations .option-line {
+            display: flex;
+            align-items: center;
+            margin-top: 5px; /* Space between the text line and checkbox line */
+        }
+
+        .specializations .option-line span {
+            margin-right: 10px;
+        }
+
+        /* Updated dice box styles */
+        .dice-box {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #2c1810;
+            position: relative;
+            flex-shrink: 0;
+            background: #fff;
+            box-shadow: 2px 2px 0 #2c1810;
+        }
+
+        .dice-shapes {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+        }
+
+        .dice-text {
+            font-family: "Bookman Old Style", Georgia, serif;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+        
+        /* Rest of previous styles */
+        .checkbox {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 5px;
+        }
+        
+        .dotted-line {
+            border-bottom: 1px dotted #000;
+            height: .5em;
+            margin: 5px 0;
+        }
+        .dotted-line-info{
+            border-bottom: 1px dotted #000;
+            height: .9em;
+            margin: 5px 0;
+        }
+        .dotted-line {
+            border-bottom: 1px dotted #000;
+            /* height: 1.5em; */
+            margin: 5px 0;
+        }
+        #visualization {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 0 auto;
+            width: fit-content;
+            margin-bottom: 0px;
+        }
+        .curved-text {
+            font-size: 14px;
+            fill: #333;
+        }
+        @page {
+            size: landscape;
+            margin: 0.47in;
+        }
+        .success-tiers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div>
+            <div class="section">
+                <div class="section-title">Personality Strengths/Styles</div>                
+                <div class="stat-row">
+                    <div class="dice-box">
+                        <svg class="dice-shapes" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" stroke="#2c1810" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                            <text x="30" y="34" text-anchor="middle" class="dice-text" fill="#2c1810" font-size="16">d__</text>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-name">Mystique</div>
+                         <div class="specializations">
+                            <!-- <span>I tend to be more (choose 1)</span> -->
+                                <div class="option-line">
+                                    <span><div class="checkbox"></div>Graceful</span>
+                                    <span><div class="checkbox"></div>Mysterious</span>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="dice-box">
+                        <svg class="dice-shapes" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" stroke="#2c1810" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                            <text x="30" y="34" text-anchor="middle" class="dice-text" fill="#2c1810" font-size="16">d__</text>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-name">Acumen</div>
+                         <div class="specializations">
+                            <!-- <span>I tend to be more (choose 1)</span> -->
+                            <div class="option-line">
+                                <span><div class="checkbox"></div>Astute</span>
+                                <span><div class="checkbox"></div>Rigorous</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="dice-box">
+                        <svg class="dice-shapes" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" stroke="#2c1810" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                            <text x="30" y="34" text-anchor="middle" class="dice-text" fill="#2c1810" font-size="16">d__</text>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-name">Grit</div>
+                        <div class="specializations">
+                            <!-- <span>I tend to be more (choose 1)</span> -->
+                            <div class="option-line">
+                                <span><div class="checkbox"></div>Adaptive</span>
+                                <span><div class="checkbox"></div>Tenacious</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="dice-box">
+                        <svg class="dice-shapes" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" stroke="#2c1810" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                            <text x="30" y="34" text-anchor="middle" class="dice-text" fill="#2c1810" font-size="16">d__</text>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-name">Instinct</div>
+                        <div class="specializations">
+                            <!-- <span>I tend to be more (choose 1)</span> -->
+                            <div class="option-line">
+                                <span><div class="checkbox"></div>Courageous</span>
+                                <span><div class="checkbox"></div>Mindful</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="dice-box">
+                        <svg class="dice-shapes" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="28" stroke="#2c1810" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                            <text x="30" y="34" text-anchor="middle" class="dice-text" fill="#2c1810" font-size="16">d__</text>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-name">__________Craft</div>
+                        <div class="specializations">
+                             <!-- <span>I tend to be more (choose 1)</span> -->
+                             <div class="option-line">
+                                 <span><div class="checkbox"></div>Resourceful</span>
+                                <span><div class="checkbox"></div>Visionary</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Character Info</div>
+                <div class="success-tiers">
+                    <div>Name:<div class="dotted-line-info"></div></div>
+                    <div>School:<div class="dotted-line-info"></div></div>
+                    <div>House:<div class="dotted-line-info"></div></div>
+                    <div>Aesthetic:<div class="dotted-line-info"></div></div>
+                </div>
+            </div>       
+
+        </div>
+
+        <div>       
+            <div class="section">
+                <div class="section-title">Ring of Essential Human Needs</div>
+                <svg viewBox="0 0 330 330">
+                    <!-- Grid Boxes -->
+                    <!-- Top Row -->
+                    <g transform="translate(0,0)">
+                      <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                      <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                      <text x="45" y="50" text-anchor="middle" font-size="12">alliance</text>
+                      <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                    </g>
+                    
+                    <g transform="translate(120,0)">
+                      <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                      <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                      <text x="45" y="50" text-anchor="middle" font-size="12">autonomy</text>
+                      <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                    </g>
+                    
+                    <g transform="translate(240,0)">
+                      <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                      <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                      <text x="45" y="50" text-anchor="middle" font-size="12">adeptness</text>
+                      <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                    </g>
+                    <!-- 4 -->
+                    <g transform="translate(240,120)">
+                      <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                      <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                      <text x="45" y="50" text-anchor="middle" font-size="12">advancement</text>
+                      <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                    </g>
+                    <!-- 5-7-->
+                    <g transform="translate(240,240)">
+                        <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                        <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                        <text x="45" y="50" text-anchor="middle" font-size="12">aspiration</text>
+                        <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                      </g>
+                      <g transform="translate(120,240)">
+                        <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                        <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                        <text x="45" y="50" text-anchor="middle" font-size="12">amazement</text>
+                        <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                      </g>
+                      <g transform="translate(0,240)">
+                        <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                        <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                        <text x="45" y="50" text-anchor="middle" font-size="12">authenticity</text>
+                        <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                      </g>
+                    <!-- 9 -->
+                    <g transform="translate(0,120)">
+                        <rect x="0" y="0" width="90" height="90" fill="white" stroke="black"/>
+                        <text x="45" y="20" text-anchor="middle" font-size="14">#_</text>
+                        <text x="45" y="50" text-anchor="middle" font-size="12">affection</text>
+                        <rect x="39" y="65" width="12" height="12" fill="white" stroke="black"/>
+                      </g>
+                      
+                  
+                    <!-- Horizontal Arrows -->
+                    <!-- Top row -->
+                    <g transform="translate(90,45)">
+                      <line x1="0" y1="0" x2="30" y2="0" stroke="black"/>
+                      <polygon points="0,0 6,-3 6,3" fill="black"/>
+                      <polygon points="30,0 24,-3 24,3" fill="black"/>
+                    </g>
+                    <g transform="translate(210,45)">
+                      <line x1="0" y1="0" x2="30" y2="0" stroke="black"/>
+                      <polygon points="0,0 6,-3 6,3" fill="black"/>
+                      <polygon points="30,0 24,-3 24,3" fill="black"/>
+                    </g>
+                  
+
+                  
+                    <!-- Bottom row -->
+                    <g transform="translate(90,285)">
+                      <line x1="0" y1="0" x2="30" y2="0" stroke="black"/>
+                      <polygon points="0,0 6,-3 6,3" fill="black"/>
+                      <polygon points="30,0 24,-3 24,3" fill="black"/>
+                    </g>
+                    <g transform="translate(210,285)">
+                      <line x1="0" y1="0" x2="30" y2="0" stroke="black"/>
+                      <polygon points="0,0 6,-3 6,3" fill="black"/>
+                      <polygon points="30,0 24,-3 24,3" fill="black"/>
+                    </g>
+                  
+                    <!-- Vertical Arrows -->
+                    <!-- Left column -->
+                    <g transform="translate(45,90)">
+                      <line x1="0" y1="0" x2="0" y2="30" stroke="black"/>
+                      <polygon points="0,0 -3,6 3,6" fill="black"/>
+                      <polygon points="0,30 -3,24 3,24" fill="black"/>
+                    </g>
+                    <g transform="translate(45,210)">
+                      <line x1="0" y1="0" x2="0" y2="30" stroke="black"/>
+                      <polygon points="0,0 -3,6 3,6" fill="black"/>
+                      <polygon points="0,30 -3,24 3,24" fill="black"/>
+                    </g>
+                                  
+                    <!-- Right column -->
+                    <g transform="translate(285,90)">
+                      <line x1="0" y1="0" x2="0" y2="30" stroke="black"/>
+                      <polygon points="0,0 -3,6 3,6" fill="black"/>
+                      <polygon points="0,30 -3,24 3,24" fill="black"/>
+                    </g>
+                    <g transform="translate(285,210)">
+                      <line x1="0" y1="0" x2="0" y2="30" stroke="black"/>
+                      <polygon points="0,0 -3,6 3,6" fill="black"/>
+                      <polygon points="0,30 -3,24 3,24" fill="black"/>
+                    </g>
+                  </svg>
+            </div>
+            
+            <div class="section">
+            <div class="section-title">Friends (?)</div>
+            <div class="success-tiers">
+            <div><div class="checkbox"></div><span style="opacity:.3"><i>Yourself?</i></span><div class="dotted-line"></div></div>
+            <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div>
+            <div><div class="checkbox"></div><span style="opacity:.3">
+                <!-- <i>Name/Connection</i> -->
+            </span><div class="dotted-line"></div></div>
+            <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div>
+            <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div>
+            <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div>
+            <!-- <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div> -->
+            <!-- <div><div class="checkbox"></div><span style="opacity:.3"><i></i></span><div class="dotted-line"></div></div> -->
+
+        </div></div>
+            
+            
+        </div>
+    </div>
+    <script>
+        // Create SVG container
+        const svg = d3.select("#visualization")
+            .append("svg")
+            .attr("width", 400)
+            .attr("height", 300);
+
+        // Add defs for our text paths
+        const defs = svg.append("defs");
+
+        // Calculate the radius of each circle
+        const circleRadius = 44;
+        const ringRadius = .53*circleRadius / Math.sin(Math.PI / 9);
+
+        // Create center point of the ring
+        const centerX = 200;
+        const centerY = 150;
+
+        // Sample text for each circle with custom start angles (in degrees)
+        const circleData = [
+            { text: "advancement", textStartAngle: 325 },
+            { text: "amazement", textStartAngle: 324 },
+            { text: "authenticity", textStartAngle: 325 },
+            { text: "affection", textStartAngle: 326  },
+            { text: "acceptance", textStartAngle: 316 },
+            { text: "alliance", textStartAngle: 332 },
+            { text: "autonomy", textStartAngle: 320 },
+            { text: "adeptness", textStartAngle: 315 },
+            { text: "accomplishment", textStartAngle: 294}
+        ];
+
+        // Generate complete data for 9 circles, each 40 degrees apart
+        const completeCircleData = circleData.map((data, i) => {
+            const angle = (i * 40) * (Math.PI / 180); // Convert degrees to radians
+            return {
+                x: centerX + ringRadius * Math.cos(angle),
+                y: centerY + ringRadius * Math.sin(angle),
+                angle: angle,
+                text: data.text,
+                textStartAngle: data.textStartAngle,
+                id: `circle-${i}`
+            };
+        });
+
+        // Create circular paths for text
+        completeCircleData.forEach(d => {
+            // Create a circular path around each circle
+            const textPathRadius = circleRadius + 5; // Slightly larger than circle radius
+            
+            // Calculate the start point of the arc using the custom textStartAngle
+            const startAngle = d.angle + (d.textStartAngle * Math.PI / 180);
+            const textPath = defs.append("path")
+                .attr("id", d.id)
+                .attr("d", `
+                    M ${d.x + textPathRadius * Math.cos(startAngle)},
+                      ${d.y + textPathRadius * Math.sin(startAngle)}
+                    A ${textPathRadius} ${textPathRadius} 0 1 1
+                      ${d.x + textPathRadius * Math.cos(startAngle - 0.01)},
+                      ${d.y + textPathRadius * Math.sin(startAngle - 0.01)}
+                `);
+        });
+
+        // Create groups for circles and their text
+        const groups = svg.selectAll("g")
+            .data(completeCircleData)
+            .enter()
+            .append("g");
+
+        // Draw the circles
+        groups.append("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", circleRadius)
+            .attr("fill", "grey")
+            .attr("fill-opacity", ".07")
+            .attr("stroke", "none")
+            .attr("stroke-width", 1);
+
+        // Add text that follows the circular paths
+        groups.append("text")
+            .attr("class", "curved-text")
+            .attr("dy", -2) // Adjust text position relative to path
+            .append("textPath")
+            .attr("href", d => `#${d.id}`)
+            .attr("startOffset", "0%")
+            .text(d => d.text);
+
+        // Add checkboxes
+        const checkboxGroups = groups.append("g")
+            .attr("class", "checkbox")
+            .attr("transform", d => {
+                // Calculate position for checkbox
+                const textPathRadius = circleRadius + 30; // Position outside the text
+                const checkboxAngle = d.angle + Math.PI / 180; // Adjust angle to position after text
+                const x = d.x + textPathRadius * Math.cos(checkboxAngle);
+                const y = d.y + textPathRadius * Math.sin(checkboxAngle);
+                return `translate(${x},${y})`;
+            })
+            ;
+
+        // Add the checkbox rectangles
+        checkboxGroups.append("rect")
+            .attr("x", -6)
+            .attr("y", -6)
+            .attr("width", 12)
+            .attr("height", 12)
+            .attr("fill", "white")
+            .attr("stroke", "black");
+    </script>
+</body>
+</html>
