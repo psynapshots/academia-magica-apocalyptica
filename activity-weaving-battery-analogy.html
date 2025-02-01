@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+
+        .battery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .battery {
+            width: 100px;
+            height: 150px;
+            position: relative;
+            transition: opacity 0.3s;
+        }
+
+        .battery-section {
+            width: 100%;
+            height: 33.33%;
+            border: 2px solid black;
+            box-sizing: border-box;
+        }
+
+        .battery-label {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .event-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .event-card {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #333;
+            padding: 10px;
+            background: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .event-name {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .ticker {
+            width: 500px;
+            height: 30px;
+            background: black;
+            color: yellow;
+            font-family: 'Courier New', monospace;
+            padding: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div>UNIVERSAL BATTERIES</div>
+    <div class="battery-grid" id="batteryGrid"></div>
+    <div>DAILY EVENTS (CLICK ONE)</div>
+    <div class="event-cards" id="eventCards"></div>
+    <div class="ticker" id="ticker"></div>
+
+    <script>
+        const needs = [
+            'Connection', 'Physical Well-being', 'Play',
+            'Autonomy', 'Meaning', 'Peace',
+            'Security', 'Expression', 'Growth'
+        ];
+
+        const events = [
+            { name: 'Lunch with Friends', changes: [1,1,1,0,-1,0,0,1,0] },
+            { name: 'Meditation', changes: [0,0,0,0,0,1,0,0,1] },
+            { name: 'Exercise', changes: [0,1,1,1,0,0,1,0,1] },
+            { name: 'Creative Project', changes: [0,0,1,1,1,0,0,1,1] },
+            { name: 'Nature Walk', changes: [0,1,1,1,0,1,0,0,1] },
+            { name: 'Deep Discussion', changes: [1,0,0,1,1,0,0,1,1] },
+            { name: 'Rest', changes: [0,1,0,0,0,1,1,0,0] },
+            { name: 'Help Others', changes: [1,-1,0,-1,1,-1,1,1,1] },
+            { name: 'Learning', changes: [0,0,0,1,1,0,0,1,1] },
+            { name: 'Work Deadline Pressure', changes: [-1, -1, 0, -1, 0, -1, -1, -1, 0] },
+            { name: 'Traffic Jam', changes: [-1, 0, -1, 0, 0, -1, -1, 0, 0] },
+            { name: 'Financial Worries', changes: [-1, 0, 0, 0, -1, -1, -1, 0, 0] },
+            { name: 'Conflict with Colleague', changes: [-1, 0, -1, -1, -1, -1, -1, -1, 0] },
+            { name: 'Lack of Sleep', changes: [0, -1, -1, -1, 0, -1, -1, -1, -1] },
+            { name: 'Social Media Overload', changes: [-1, 0, -1, 0, 0, -1, -1, -1, 0] },
+            { name: 'Errands & Chores', changes: [0, -1, 0, 0, 0, -1, -1, 0, 0] },
+            { name: 'Overbooked Schedule', changes: [-1, -1, -1, -1, -1, -1, -1, 0, 0] }
+        ];
+
+        let batteryLevels = [1,0,0,0,2,1,1,1,0]; // 5 green, 3 yellow, 1 red
+        let eventHistory = [];
+
+        function createBatteryGrid() {
+            const grid = document.getElementById('batteryGrid');
+            grid.innerHTML = '';
+            
+            needs.forEach((need, i) => {
+                const battery = document.createElement('div');
+                battery.className = 'battery';
+                
+                const colors = ['green', 'yellow', 'red'];
+                colors.forEach((color, j) => {
+                    const section = document.createElement('div');
+                    section.className = 'battery-section';
+                    section.style.background = j === batteryLevels[i] ? color : 'white';
+                    battery.appendChild(section);
+                });
+
+                const label = document.createElement('div');
+                label.className = 'battery-label';
+                label.textContent = need;
+                battery.appendChild(label);
+                
+                grid.appendChild(battery);
+            });
+        }
+
+        function createEventCards() {
+            const container = document.getElementById('eventCards');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 3; i++) {
+                const eventIndex = Math.floor(Math.random() * events.length);
+                const event = events[eventIndex];
+                
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.addEventListener('click', () => handleEventClick(event));
+                
+                const grid = document.createElement('div');
+                grid.className = 'event-grid';
+                
+                event.changes.forEach(change => {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.textContent = change > 0 ? '↑' : (change < 0 ? '↓' : '=');
+                    grid.appendChild(arrow);
+                });
+                
+                const name = document.createElement('div');
+                name.className = 'event-name';
+                name.textContent = event.name;
+                
+                card.appendChild(grid);
+                card.appendChild(name);
+                container.appendChild(card);
+            }
+        }
+
+        function updateTicker(eventName) {
+            const ticker = document.getElementById('ticker');
+            eventHistory.push(eventName);
+            if (eventHistory.length > 5) eventHistory.shift();
+            ticker.textContent = eventHistory.join(' → ');
+        }
+
+        function handleEventClick(event) {
+            batteryLevels = batteryLevels.map((level, i) => {
+                const newLevel = level - event.changes[i];
+                return Math.max(0, Math.min(2, newLevel));
+            });
+            
+            updateTicker(event.name);
+            createBatteryGrid();
+            createEventCards();
+        }
+
+        // Initial setup
+        createBatteryGrid();
+        createEventCards();
+    </script>
+</body>
+</html>
