@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eigenmode Interpretation of 3-stat RPGs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between; /* Align tasks to the right */
+        }
+
+        .board-container {
+            position: relative;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            /* background: #fff; */
+            padding: 10px;
+            border-radius: 8px;
+            /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
+        }
+
+        .square {
+            aspect-ratio: 1;
+            border: 1px solid #ccc;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            background: white;
+        }
+
+        .square:hover {
+            background: #f5f5f5;
+        }
+
+        .square.current {
+            background: #e0e0e0;
+        }
+
+        .number {
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .pie-container {
+            width: 80%;
+            height: 80%;
+            position: relative;
+        }
+
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #45a049;
+        }
+
+         .tasks {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .task-card {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .task-card.completed {
+            background: #e8f5e9;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .factor {
+            margin: 2px 0;
+        }
+
+        .perception { color: #f44336; }
+        .language { color: #2196F3; }
+        .movement { color: #FFC107; }
+
+        .shortcuts-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Eigenmode Interpretation of 3-stat RPGs</h1>
+    
+    <div class="controls">
+        <button class="button" onclick="regenerateShortcuts()">Regenerate Mental Shortcuts</button>
+    </div>
+
+    <div class="game-container">
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
+        <div class="tasks">
+            <h2>Current Tasks</h2>
+            <div id="task-cards"></div>
+            <div class="score">
+                Tasks Completed: <span id="score">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPosition = 1;
+        let score = 0;
+        let usedNumbers = new Set();
+        let currentTasks = [];
+        let shortcuts = [];
+
+        function getPrimeFactors(n) {
+            const factors = { 2: 0, 3: 0, 5: 0 };
+            let num = n;
+            
+            while (num % 2 === 0) {
+                factors[2]++;
+                num = num / 2;
+            }
+            while (num % 3 === 0) {
+                factors[3]++;
+                num = num / 3;
+            }
+            while (num % 5 === 0) {
+                factors[5]++;
+                num = num / 5;
+            }
+            
+            return factors;
+        }
+
+        function createPieChart(container, factors) {
+            const canvas = document.createElement('canvas');
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            const ctx = canvas.getContext('2d');
+            
+            const total = factors[2] + factors[3] + factors[5];
+            if (total === 0) return canvas;
+
+            let currentAngle = 0;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) * 0.8;
+
+            // Draw 2s (perception) in red
+            if (factors[2] > 0) {
+                const angle = (factors[2] / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + angle);
+                ctx.fillStyle = '#f44336';
+                ctx.fill();
+                currentAngle += angle;
+            }
+
+            // Draw 3s (language) in blue
+            if (factors[3] > 0) {
+                const angle = (factors[3] / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + angle);
+                ctx.fillStyle = '#2196F3';
+                ctx.fill();
+                currentAngle += angle;
+            }
+
+            // Draw 5s (movement) in yellow
+            if (factors[5] > 0) {
+                const angle = (factors[5] / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + angle);
+                ctx.fillStyle = '#FFC107';
+                ctx.fill();
+            }
+
+            return canvas;
+        }
+
+        function generateTask() {
+            const availableNumbers = [];
+            for (let i = 4; i <= 100; i++) {
+                if (!usedNumbers.has(i)) {
+                    const factors = getPrimeFactors(i);
+                    if (factors[2] + factors[3] + factors[5] > 0) {
+                        availableNumbers.push(i);
+                    }
+                }
+            }
+
+            if (availableNumbers.length === 0) {
+                usedNumbers.clear();
+                return generateTask();
+            }
+
+            const number = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            usedNumbers.add(number);
+            return number;
+        }
+
+        function updateTasks() {
+            const taskContainer = document.getElementById('task-cards');
+            taskContainer.innerHTML = '';
+            
+            while (currentTasks.length < 3) {
+                currentTasks.push(generateTask());
+            }
+
+            currentTasks.forEach((taskNumber, index) => {
+                const factors = getPrimeFactors(taskNumber);
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.innerHTML = `
+                    <h3>Task ${index + 1}: ${taskNumber}</h3>
+                    ${factors[2] > 0 ? `<div class="factor perception">${factors[2]}x2 perception</div>` : ''}
+                    ${factors[3] > 0 ? `<div class="factor language">${factors[3]}x3 language</div>` : ''}
+                    ${factors[5] > 0 ? `<div class="factor movement">${factors[5]}x5 movement</div>` : ''}
+                `;
+                taskContainer.appendChild(card);
+            });
+        }
+
+        function generateShortcuts() {
+            shortcuts = [];
+            const usedEnds = new Set(); // Track end positions to avoid duplicates
+            // Generate 8 snakes and 8 ladders
+            const nShortcuts = 5
+            for (let i = 0; i < nShortcuts*2; i++) {
+                let start, end;
+                const isLadder = i < nShortcuts;
+                
+                do {
+                    start = Math.floor(Math.random() * 90) + 10;
+                    end = Math.floor(Math.random() * 90) + 10;
+
+                } while (
+                    (isLadder && end <= start) ||
+                    (!isLadder && end >= start) ||
+                     Math.abs(end - start) < 10 ||
+                    Math.abs(Math.floor((start-1)/10) - Math.floor((end-1)/10)) < 2 ||
+                    usedEnds.has(end)
+                );
+                 
+                usedEnds.add(end);
+
+                shortcuts.push({
+                    start,
+                    end,
+                    isLadder
+                });
+            }
+            drawShortcuts();
+        }
+
+        function drawShortcuts() {
+            const canvas = document.querySelector('.shortcuts-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                shortcuts.forEach(shortcut => {
+                    const startSquare = document.querySelector(`[data-number="${shortcut.start}"]`);
+                    const endSquare = document.querySelector(`[data-number="${shortcut.end}"]`);
+                    
+                    if (startSquare && endSquare) {
+                        const startRect = startSquare.getBoundingClientRect();
+                        const endRect = endSquare.getBoundingClientRect();
+                        const boardRect = document.getElementById('board').getBoundingClientRect();
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            startRect.left + startRect.width/2 - boardRect.left,
+                            startRect.top + startRect.height/2 - boardRect.top
+                        );
+                        ctx.lineTo(
+                            endRect.left + endRect.width/2 - boardRect.left,
+                            endRect.top + endRect.height/2 - boardRect.top
+                        );
+                        ctx.strokeStyle = shortcut.isLadder ? 'green' : 'black';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                });
+            }
+        }
+
+        function initializeBoard() {
+            const board = document.getElementById('board');
+            const squares = [];
+            
+           // Create squares in snake pattern
+            for (let row = 9; row >= 0; row--) {
+                const rowSquares = [];
+                for (let col = 0; col < 10; col++) {
+                    const square = document.createElement('div');
+                    square.className = 'square';
+                    const number = row % 1 === 0 ? 
+                        row * 10 + col + 1 : 
+                        row * 10 + (10 - col);
+
+                     square.dataset.number = number;
+
+                    const numberDiv = document.createElement('div');
+                    numberDiv.className = 'number';
+                    numberDiv.textContent = number;
+                    square.appendChild(numberDiv);
+                    
+                    const pieContainer = document.createElement('div');
+                    pieContainer.className = 'pie-container';
+                    const factors = getPrimeFactors(number);
+                    const pie = createPieChart(pieContainer, factors);
+                    pieContainer.appendChild(pie);
+                    square.appendChild(pieContainer);
+                    
+                    square.addEventListener('click', () => movePlayer(number));
+                    rowSquares.push(square);
+                }
+                if (row % 2 === 1) rowSquares.reverse();
+                squares.push(...rowSquares);
+            }
+            
+            squares.forEach(square => board.appendChild(square));
+
+            // Add canvas for shortcuts
+            const canvas = document.createElement('canvas');
+            canvas.className = 'shortcuts-canvas';
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.width = board.offsetWidth;
+            canvas.height = board.offsetHeight;
+             board.parentElement.appendChild(canvas);
+
+
+            generateShortcuts();
+            updateTasks();
+            updatePlayerPosition();
+
+             // Add event listener for arrow keys
+             document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowDown') {
+                   movePlayer(Math.max(1,currentPosition - 1))
+                } else if (event.key === 'ArrowUp') {
+                     movePlayer(Math.min(100,currentPosition + 1))
+                }
+            });
+        }
+
+        function movePlayer(newPosition) {
+            document.querySelector(`.square[data-number="${currentPosition}"]`)?.classList.remove('current');
+            currentPosition = newPosition;
+            
+            // Check for shortcuts
+            // const shortcut = shortcuts.find(s => s.start === currentPosition);
+            // if (shortcut) {
+            //     currentPosition = shortcut.end;
+            // }
+            
+            updatePlayerPosition();
+            checkTasks();
+        }
+
+        function updatePlayerPosition() {
+            document.querySelector('.square.current')?.classList.remove('current');
+            const currentSquare = document.querySelector(`.square[data-number="${currentPosition}"]`);
+            if (currentSquare) {
+                currentSquare.classList.add('current');
+            }
+        }
+
+        function checkTasks() {
+            const taskCards = document.querySelectorAll('.task-card');
+            currentTasks.forEach((task, index) => {
+                if (task === currentPosition) {
+                    taskCards[index].classList.add('completed');
+                    score++;
+                    document.getElementById('score').textContent = score;
+                    currentTasks = currentTasks.filter(t => t !== task);
+                    updateTasks();
+                }
+            });
+        }
+
+        function regenerateShortcuts() {
+            generateShortcuts();
+        }
+
+        window.onload = initializeBoard;
+    </script>
+</body>
+</html>
